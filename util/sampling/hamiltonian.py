@@ -148,19 +148,19 @@ class HamiltonianSampler(BaseSampler):
 
                 for leapfrog_step in range(leapfrog_steps):
                     # Make a half step for the leapfrog algorithm
-                    momentum += 0.5 * epsilon * jac
+                    momentum = momentum + 0.5 * epsilon * jac
                     # Update the position
                     if self.mass.ndim < 2:
-                        parameters_end += epsilon * self.inv_mass * momentum
+                        parameters_end = parameters_end + epsilon * self.inv_mass * momentum
                     else:
-                        parameters_end += epsilon * self.inv_mass.dot(momentum)
+                        parameters_end = parameters_end + epsilon * self.inv_mass.dot(momentum)
                     # Evaluate the Jacobian
                     if self.jac:
                         jac = self.jac(parameters_end, *self.args)
                     else:
                         fun_value_end, jac = self.fun(parameters_end, *self.args)
                     # Make another half-step
-                    momentum += 0.5 * epsilon * jac
+                    momentum = momentum + 0.5 * epsilon * jac
 
                     if full:
                         # Append parameters
