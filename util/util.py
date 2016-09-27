@@ -337,7 +337,7 @@ def maximize(fun, x0, args=(), method=None, jac=None, hess=None, hessp=None, bou
                              constraints, tol, callback, options)
 
 
-def log_gaussian(x, mu=0.0, sigma=1.0):
+def log_gaussian(x, mean=0.0, covariance=1.0):
     """
     Evaluate the log of the (unnormalised) Gaussian distribution.
 
@@ -345,10 +345,10 @@ def log_gaussian(x, mu=0.0, sigma=1.0):
     ----------
     x : float
         point at which to evaluate the distribution
-    mu : float
+    mean : float
         mean of the distribution
-    sigma : float
-        standard deviation of the distribution
+    covariance : float
+        covariance of the distribution
 
     Returns
     -------
@@ -357,6 +357,15 @@ def log_gaussian(x, mu=0.0, sigma=1.0):
     jac : float
         derivative of the log of the pdf
     """
-    value = -0.5 * (x - mu) ** 2 / sigma ** 2
-    jac = (mu - x) / sigma ** 2
+    # Convert a one-dimensional and two-dimensional arrays
+    mean = np.atleast_1d(mean)
+    covariance = np.atleast_1d(covariance)
+    if covariance.ndim == 1:
+        covariance = np.diag(covariance)
+
+    # Compute the values
+    precision = np.linalg.inv(covariance)
+    residual = x - mean
+    value = -0.5 * np.dot(np.dot(residual, precision), residual)
+    jac = np.dot(residual, precision)
     return value, jac
