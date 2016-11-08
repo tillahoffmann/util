@@ -13,7 +13,7 @@ class BaseSampler(object):
     Parameters
     ----------
     fun : callable
-        log-posterior or log-likelihood function taking a vector of parameters as its first argument
+        negative log-posterior or log-likelihood function taking a vector of parameters as its first argument
     args : array_like
         additional arguments to pass to `fun`
     parameter_names : list
@@ -62,7 +62,7 @@ class BaseSampler(object):
 
     def grid_density_plot(self, burn_in=0, parameters=None, values=None, nrows=None, ncols=None, bins=10):
         """
-        Plot the marginal densities of parameters  (and vertical lines indicating the true values).
+        Plot the marginal densities of parameters (and vertical lines indicating the true values).
 
         Parameters
         ----------
