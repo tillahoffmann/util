@@ -9,7 +9,7 @@ class MetropolisSampler(BaseSampler):
     Parameters
     ----------
     fun : callable
-        log-posterior or log-likelihood function taking a vector of parameters as its first argument
+        negative log-posterior or log-likelihood function taking a vector of parameters as its first argument
     proposal_covariance : array_like
         covariance of the Gaussian proposal distribution
     args : array_like
@@ -45,7 +45,7 @@ class MetropolisSampler(BaseSampler):
                 # Compute the function at the proposed sample
                 fun_proposal = self.fun(proposal, *self.args)
                 # Accept or reject the step
-                if fun_proposal - fun_current > np.log(np.random.uniform()):
+                if fun_proposal - fun_current < np.log(np.random.uniform()):
                     # Update the log posterior and the parameter values
                     fun_current = fun_proposal
                     parameters = proposal

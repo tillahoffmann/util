@@ -25,7 +25,6 @@ class AdaptiveRejectionSampler:
         lower and upper bound of the domain on which the distribution is supported. If `domain` is not given, the
         domain is the positive real line.
     """
-
     def __init__(self, fun, x0=None, args=None, jac=None, domain=None):
         # Copy the function and the Jacobian
         self.fun = fun

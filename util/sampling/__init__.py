@@ -1,3 +1,2 @@
 from .metropolis import AdaptiveMetropolisSampler, MetropolisSampler
 from .hamiltonian import HamiltonianSampler
-from .adaptive_rejection import AdaptiveRejectionSampler
