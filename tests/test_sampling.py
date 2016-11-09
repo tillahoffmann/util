@@ -15,11 +15,11 @@ for num_parameters in [1, 3, 5]:
                                          covariance / num_parameters)
     params.append((mean, covariance, sampler))
 
-    """
     # Create an adaptive metropolis sampler
     sampler = sampling.AdaptiveMetropolisSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0])
     params.append((mean, covariance, sampler))
 
+    """
     # Create a Hamiltonian metropolis sampler
     sampler = sampling.HamiltonianSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0],
                                           jac=lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[1],
