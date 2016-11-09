@@ -5,5 +5,5 @@ setup(
     version='0.1',
     url='https://github.com/tillahoffmann/congress',
     author='Till Hoffmann',
-    packages=find_packages('util')
+    packages=find_packages()
 )
