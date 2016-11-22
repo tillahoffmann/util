@@ -1,11 +1,10 @@
-from .base import BaseSampler
+import logging
 import numpy as np
 from matplotlib import pyplot as plt
-from warnings import warn
-import logging
+from .base import BaseSampler
 
 
-logger = logging.getLogger('util.sampling')
+logger = logging.getLogger(__name__)
 
 
 class HamiltonianSampler(BaseSampler):
@@ -78,7 +77,7 @@ class HamiltonianSampler(BaseSampler):
         The optimal mass matrix is the inverse sample covariance (see Gelman et al.).
         """
         if len(self._samples) < 2:
-            warn('the number of samples is too small to estimate the mass matrix')
+            logger.warn('the number of samples is too small to estimate the mass matrix')
             return 1.0
 
         cov = np.cov(self.samples, rowvar=False)
@@ -147,7 +146,7 @@ class HamiltonianSampler(BaseSampler):
                     params_sequence = [parameters_end.copy()]
                     energy_sequence = [(fun_value, kinetic)]
 
-                for leapfrog_step in range(leapfrog_steps):
+                for _ in range(leapfrog_steps):
                     # Make a half step for the leapfrog algorithm
                     momentum = momentum + 0.5 * epsilon * jac
                     # Update the position
@@ -222,7 +221,7 @@ class HamiltonianSampler(BaseSampler):
         # Run a simulation with full output
         leapfrog_steps = leapfrog_steps or self.leapfrog_steps
         epsilon = epsilon or self.epsilon
-        params_end, params_sequence, energy_sequence = self.sample(parameters, 1, None, True, epsilon, leapfrog_steps)
+        _, params_sequence, energy_sequence = self.sample(parameters, 1, None, True, epsilon, leapfrog_steps)
 
         fig, (ax1, ax2) = plt.subplots(1, 2, True)
 

@@ -1,7 +1,7 @@
-import numpy as np
-from ..plotting import trace_plot, grid_density_plot, comparison_plot
-import pandas as pd
 import logging
+import numpy as np
+import pandas as pd
+from ..plotting import trace_plot, grid_density_plot, comparison_plot
 
 logger = logging.getLogger('util.sampling')
 
