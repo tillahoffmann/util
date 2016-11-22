@@ -9,6 +9,8 @@ install:
   - conda env create
   - source activate util
   - pip install -e .
+  # Make sure we don't try to use pyqt
+  - echo backend:agg > matplotlibrc
 
 script:
   - py.test
