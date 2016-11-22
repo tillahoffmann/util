@@ -1,11 +1,10 @@
-from matplotlib import pyplot as plt
-import numpy as np
 import itertools as it
+import logging
+import os
+from matplotlib import pyplot as plt, transforms as mtransforms
+import numpy as np
 from scipy.stats import gaussian_kde
 from .util import autospace
-from os import path
-from matplotlib import transforms as mtransforms
-import logging
 
 
 logger = logging.getLogger('util.plotting')
@@ -219,12 +218,12 @@ def get_style(style):
         name of the style
     """
     # Use the default style or load it if it is available
-    if style in plt.style.available or path.exists(style) or style == 'default':
+    if style in plt.style.available or os.path.exists(style) or style == 'default':
         return style
 
     # Construct a filename in the package
-    filename = path.join(path.dirname(path.realpath(__file__)), 'stylelib', style + '.mplstyle')
-    if path.exists(filename):
+    filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'stylelib', style + '.mplstyle')
+    if os.path.exists(filename):
         return filename
 
     raise ValueError("could not locate style specification '{}'".format(style))
@@ -242,7 +241,7 @@ def savefigs(fig, filename, *formats, **kwargs):
     """
     if formats:
         # Get the base name without extension
-        basename, ext = path.splitext(filename)
+        basename, ext = os.path.splitext(filename)
         if ext:
             formats = (ext,) + formats
         # Iterate over all formats
@@ -302,3 +301,42 @@ def rescaled_axes(scale_x=1, scale_y=1, tx=0, ty=0, ax=None):
         ax2.axis["right"].toggle(all=False, ticks=True)
 
     return ax2
+
+
+def plot_categories(categories, y, yerr=None, shift=0, ticks=True, tick_rotation=-45, ax=None, **kwargs):
+    """
+    Plot values for different categories (with errors).
+
+    Parameters
+    ----------
+    categories : list[str]
+        category names
+    y : dict[float]
+        values for categories keyed by name
+    yerr : dict[float]
+        errors for the categories keyed by name
+    shift : float
+        shift the data points by a small amount
+    ticks : bool
+        whether to show ticks
+    tick_rotation : float
+        angle by which to rotate ticks
+    ax
+        axes to plot into
+    kwargs : dict
+        keyword arguments passed on to ax.errorbar
+    """
+    # Get default axes
+    ax = ax or plt.gca()
+
+    # Add labels if desired
+    x = np.arange(len(categories))
+    if ticks:
+        ax.set_xticks(x)
+        ax.set_xticklabels(categories, rotation=tick_rotation)
+
+
+    y = [y.get(category, np.nan) for category in categories]
+    if yerr is not None:
+        yerr = [yerr.get(category, np.nan) for category in categories]
+    return ax.errorbar(x + shift, y, yerr, **kwargs)
