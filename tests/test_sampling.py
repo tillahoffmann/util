@@ -11,21 +11,19 @@ for num_parameters in [1, 3, 5]:
     covariance = np.diag(1 + np.random.gamma(1, size=num_parameters))
 
     # Create a metropolis sampler
-    sampler = sampling.MetropolisSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0],
+    sampler = sampling.MetropolisSampler(lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[0],
                                          covariance / num_parameters)
     params.append((mean, covariance, sampler))
 
     # Create an adaptive metropolis sampler
-    sampler = sampling.AdaptiveMetropolisSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0])
+    sampler = sampling.AdaptiveMetropolisSampler(lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[0])
     params.append((mean, covariance, sampler))
 
-    """
     # Create a Hamiltonian metropolis sampler
-    sampler = sampling.HamiltonianSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0],
-                                          jac=lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[1],
+    sampler = sampling.HamiltonianSampler(lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[0],
+                                          jac=lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[1],
                                           mass=covariance)
     params.append((mean, covariance, sampler))
-    """
 
 
 @pytest.mark.parametrize('mean, covariance, sampler', params)

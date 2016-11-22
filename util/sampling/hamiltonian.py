@@ -15,7 +15,7 @@ class HamiltonianSampler(BaseSampler):
     Parameters
     ----------
     fun : callable
-        negative log-posterior or log-likelihood function taking a vector of parameters as its first argument and its
+        log-posterior or log-likelihood function taking a vector of parameters as its first argument and its
         derivative if `jac` is not given
     args : array_like
         additional arguments to pass to `fun`
@@ -149,7 +149,7 @@ class HamiltonianSampler(BaseSampler):
 
                 for leapfrog_step in range(leapfrog_steps):
                     # Make a half step for the leapfrog algorithm
-                    momentum = momentum - 0.5 * epsilon * jac
+                    momentum = momentum + 0.5 * epsilon * jac
                     # Update the position
                     if self.mass.ndim < 2:
                         parameters_end = parameters_end + epsilon * self.inv_mass * momentum
@@ -161,7 +161,7 @@ class HamiltonianSampler(BaseSampler):
                     else:
                         fun_value_end, jac = self.fun(parameters_end, *self.args)
                     # Make another half-step
-                    momentum = momentum - 0.5 * epsilon * jac
+                    momentum = momentum + 0.5 * epsilon * jac
 
                     if full:
                         # Append parameters
@@ -183,7 +183,7 @@ class HamiltonianSampler(BaseSampler):
                 kinetic_end = self.evaluate_kinetic(momentum)
 
                 # Accept or reject the step
-                if np.log(np.random.uniform()) < - fun_value_end + kinetic_end + fun_value - kinetic:
+                if np.log(np.random.uniform()) < fun_value_end + kinetic_end - fun_value - kinetic:
                     parameters = parameters_end
                     fun_value = fun_value_end
 
