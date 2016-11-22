@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger('util.plotting')
 
 
-def kde_plot(x, ax=None, **kwargs):
+def kde_plot(x, factor=0.1, ax=None, **kwargs):
     """
     Plot a univariate kernel density estimate.
 
@@ -21,14 +21,16 @@ def kde_plot(x, ax=None, **kwargs):
         values to plot
     ax : Axes
         axes to plot into
+    factor : float
+        factor by which to extend the range
     kwargs : dict
         additional keyword arguments passed to `ax.plot`
     """
     ax = ax or plt.gca()
     kde = gaussian_kde(x)
-    linx = autospace(x)
+    linx = autospace(x, factor=factor)
     y = kde(linx)
-    ax.plot(linx, y, **kwargs)
+    return ax.plot(linx, y, **kwargs)
 
 
 def density_plot(samples, burn_in=0, name=None, value=None, bins=10, ax=None, **kwargs):
@@ -55,11 +57,12 @@ def density_plot(samples, burn_in=0, name=None, value=None, bins=10, ax=None, **
 
     # Create a histogram
     if bins is not None:
-        ax.hist(x, bins, normed=True, histtype='stepfilled', facecolor='silver')
+        ax.hist(x, bins, normed=True, histtype='stepfilled', facecolor='silver', edgecolor='none')
 
     # Plot the kde
-    kde_plot(x, ax, **kwargs)
-    ax.set_xlabel(name)
+    kde_plot(x, ax=ax, **kwargs)
+    if name:
+        ax.set_xlabel(name)
 
     # Plot true values
     if value is not None:
