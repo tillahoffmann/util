@@ -1,7 +1,7 @@
-import numpy as np
-from ..plotting import trace_plot, grid_density_plot, comparison_plot
-import pandas as pd
 import logging
+import numpy as np
+import pandas as pd
+from ..plotting import trace_plot, grid_density_plot, comparison_plot
 
 logger = logging.getLogger('util.sampling')
 
@@ -13,7 +13,7 @@ class BaseSampler(object):
     Parameters
     ----------
     fun : callable
-        negative log-posterior or log-likelihood function taking a vector of parameters as its first argument
+        log-posterior or log-likelihood function taking a vector of parameters as its first argument
     args : array_like
         additional arguments to pass to `fun`
     parameter_names : list
@@ -58,7 +58,7 @@ class BaseSampler(object):
             true values corresponding to the indices in `parameters`
         """
         return trace_plot(self.samples, self.fun_values, burn_in, None if parameters is None else
-            {p: self.get_parameter_name(p) for p in parameters}, values)
+                          {p: self.get_parameter_name(p) for p in parameters}, values)
 
     def grid_density_plot(self, burn_in=0, parameters=None, values=None, nrows=None, ncols=None, bins=10):
         """
@@ -80,7 +80,7 @@ class BaseSampler(object):
             number of bins for the histograms
         """
         return grid_density_plot(self.samples, burn_in, None if parameters is None else
-            {p: self.get_parameter_name(p) for p in parameters}, values, nrows, ncols, bins)
+                                 {p: self.get_parameter_name(p) for p in parameters}, values, nrows, ncols, bins)
 
     def comparison_plot(self, values, burn_in=0, parameters=None, ax=None, **kwargs):
         return comparison_plot(self.samples, values, burn_in, parameters, ax, **kwargs)

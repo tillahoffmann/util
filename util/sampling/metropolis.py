@@ -1,5 +1,9 @@
+import logging
 import numpy as np
 from .base import BaseSampler
+
+
+logger = logging.getLogger(__name__)
 
 
 class MetropolisSampler(BaseSampler):
@@ -9,7 +13,7 @@ class MetropolisSampler(BaseSampler):
     Parameters
     ----------
     fun : callable
-        negative log-posterior or log-likelihood function taking a vector of parameters as its first argument
+        log-posterior or log-likelihood function taking a vector of parameters as its first argument
     proposal_covariance : array_like
         covariance of the Gaussian proposal distribution
     args : array_like
@@ -32,7 +36,7 @@ class MetropolisSampler(BaseSampler):
         parameters = np.asarray(parameters)
 
         try:
-            for step in steps if hasattr(steps, '__iter__') else range(steps):
+            for _ in steps if hasattr(steps, '__iter__') else range(steps):
                 # Evaluate the current function value
                 if len(self._fun_values) == 0 or self.mode == 'reevaluate':
                     fun_current = self.fun(parameters, *self.args)
@@ -45,7 +49,7 @@ class MetropolisSampler(BaseSampler):
                 # Compute the function at the proposed sample
                 fun_proposal = self.fun(proposal, *self.args)
                 # Accept or reject the step
-                if fun_current - fun_proposal > np.log(np.random.uniform()):
+                if fun_proposal - fun_current > np.log(np.random.uniform()):
                     # Update the log posterior and the parameter values
                     fun_current = fun_proposal
                     parameters = proposal
@@ -117,9 +121,9 @@ class AdaptiveMetropolisSampler(MetropolisSampler):
             self.sample_mean = np.zeros(self.num_parameters)
 
         try:
-            for step in range(steps):
+            for _ in range(steps):
                 # Make a proposal with the initial covariance or the scaled sample covariance
-                self.proposal_covariance= self.covariance0 if len(self._samples) < self.threshold \
+                self.proposal_covariance = self.covariance0 if len(self._samples) < self.threshold \
                     else self.sample_covariance + self.covariance0
 
                 # Sample

@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 
 
-params = []
+args = []
 
 for num_parameters in [1, 3, 5]:
     # Define parameters
@@ -11,24 +11,28 @@ for num_parameters in [1, 3, 5]:
     covariance = np.diag(1 + np.random.gamma(1, size=num_parameters))
 
     # Create a metropolis sampler
-    sampler = sampling.MetropolisSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0],
-                                         covariance / num_parameters)
-    params.append((mean, covariance, sampler))
+    sampler = sampling.MetropolisSampler(
+        lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[0],
+        covariance / num_parameters
+    )
+    args.append((mean, covariance, sampler))
 
     # Create an adaptive metropolis sampler
-    sampler = sampling.AdaptiveMetropolisSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0])
-    params.append((mean, covariance, sampler))
+    sampler = sampling.AdaptiveMetropolisSampler(
+        lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[0]
+    )
+    args.append((mean, covariance, sampler))
 
-    """
     # Create a Hamiltonian metropolis sampler
-    sampler = sampling.HamiltonianSampler(lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[0],
-                                          jac=lambda x, mean=mean, covariance=covariance: -log_gaussian(x, mean, covariance)[1],
-                                          mass=covariance)
-    params.append((mean, covariance, sampler))
-    """
+    sampler = sampling.HamiltonianSampler(
+        lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[0],
+        jac=lambda x, mean=mean, covariance=covariance: log_gaussian(x, mean, covariance)[1],
+        mass=covariance
+    )
+    args.append((mean, covariance, sampler))
 
 
-@pytest.mark.parametrize('mean, covariance, sampler', params)
+@pytest.mark.parametrize('mean, covariance, sampler', args)
 def test_sampling(mean, covariance, sampler):
     # Start the sampler at the mean
     sample = sampler.sample(mean, 1000)
