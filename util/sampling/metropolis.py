@@ -103,22 +103,19 @@ class AdaptiveMetropolisSampler(MetropolisSampler):
         self.scale = scale
 
         # Dummy parameters
-        self.num_parameters = None
         self.covariance0 = None
         self.sample_covariance = 0
         self.sample_mean = 0
 
     def sample(self, parameters, steps=1, callback=None):
         # Get additional information
-        if self.num_parameters is None:
-            # Store derived information
-            self.num_parameters = len(parameters)
+        if not self._samples:
             # Initialise the proposal scale
-            self.scale /= self.num_parameters
+            self.scale /= len(parameters)
             # Initialise the covariance matrix
-            self.covariance0 = np.dot(np.eye(self.num_parameters), self.epsilon)
+            self.covariance0 = np.dot(np.eye(len(parameters)), self.epsilon)
             # Initialise the running mean and variance
-            self.sample_mean = np.zeros(self.num_parameters)
+            self.sample_mean = np.zeros(len(parameters))
 
         try:
             for _ in range(steps):

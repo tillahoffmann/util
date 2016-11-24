@@ -46,29 +46,29 @@ class BaseSampler(object):
         """
         return str(index) if self.parameter_names is None else self.parameter_names[index]
 
+    def _parameter_dict(self, parameters):
+        if parameters is None:
+            parameters = range(self.num_parameters)
+        if not isinstance(parameters, dict):
+            parameters = {i: self.get_parameter_name(i) for i in parameters}
+        return parameters
+
     @ft.wraps(trace_plot)
     def trace_plot(self, burn_in=0, parameters=None, values=None):
-        if parameters is None:
-            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
-        return trace_plot(self.samples, self.fun_values, burn_in, parameters, values)
+        return trace_plot(self.samples, self.fun_values, burn_in, self._parameter_dict(parameters), values)
 
     @ft.wraps(grid_density_plot)
-    def grid_density_plot(self, burn_in=0, parameters=None, values=None, nrows=None, ncols=None, bins=10):
-        if parameters is None:
-            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
-        return grid_density_plot(self.samples, burn_in, values, nrows, ncols, bins)
+    def grid_density_plot(self, burn_in=0, parameters=None, values=None, nrows=None, ncols=None, bins=10, **kwargs):
+        return grid_density_plot(self.samples, burn_in, self._parameter_dict(parameters), values, nrows, ncols, bins,
+                                 **kwargs)
 
     @ft.wraps(comparison_plot)
     def comparison_plot(self, values, burn_in=0, parameters=None, ax=None, **kwargs):
-        if parameters is None:
-            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
-        return comparison_plot(self.samples, values, burn_in, parameters, ax, **kwargs)
+        return comparison_plot(self.samples, values, burn_in, self._parameter_dict(parameters), ax, **kwargs)
 
     @ft.wraps(autocorrelation_plot)
     def autocorrelation_plot(self, lag=50, parameters=None, ax=None, **kwargs):
-        if parameters is None:
-            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
-        return autocorrelation_plot(self.samples, parameters, lag, ax, **kwargs)
+        return autocorrelation_plot(self.samples, self._parameter_dict(parameters), lag, ax, **kwargs)
 
     def acceptance_rate(self, burn_in=0):
         """
@@ -135,3 +135,9 @@ class BaseSampler(object):
         Get the function values.
         """
         return np.asarray(self._fun_values)
+
+    @property
+    def num_parameters(self):
+        if not self._samples:
+            raise RuntimeError("cannot determine number of parameters if no samples have been drawn")
+        return len(self._samples[0])
