@@ -369,3 +369,21 @@ def log_gaussian(x, mean=0.0, covariance=1.0):
     value = -0.5 * np.dot(np.dot(residual, precision), residual)
     jac = np.dot(residual, precision)
     return value, jac
+
+
+def acorr(x, ax=None):
+    """
+    Compute the autocorrelation.
+
+    References
+    ----------
+    http://stackoverflow.com/a/27558293/1150961
+    """
+    x = np.asarray(x)
+    x = x - np.mean(x)
+
+    autocorr = np.correlate(x, x, mode='full')
+    autocorr = autocorr[x.size:]
+    autocorr /= autocorr.max()
+
+    return autocorr
