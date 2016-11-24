@@ -11,3 +11,4 @@ dependencies:
   - ipython
   - jupyter
   - pylint
+  - pytest-cov

@@ -13,4 +13,4 @@ install:
   - echo backend:agg > matplotlibrc
 
 script:
-  - py.test
+  - make tests
