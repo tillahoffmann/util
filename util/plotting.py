@@ -255,7 +255,7 @@ def savefigs(fig, filename, *formats, **kwargs):
         fig.savefig(filename, **kwargs)
 
 
-def label_subplots(axes, fmt='({alphabetic})', x=0.05, y=0.95, ha='left', va='top'):
+def label_subplots(axes, fmt='({alphabetic})', x=0.05, y=0.95, ha='left', va='top', offset=0, **kwargs):
     """
     Label subplots with ascending characters or numbers.
 
@@ -273,11 +273,14 @@ def label_subplots(axes, fmt='({alphabetic})', x=0.05, y=0.95, ha='left', va='to
         horizontal text alignment
     va : str
         vertical text alignment
+    offset : int
+        offset
     """
     alphabet = 'abcdefghijklmnopqrstuvwxyz'
     for i, ax in enumerate(np.ravel(axes)):
+        i += offset
         ax.text(x, y, fmt.format(alphabetic=alphabet[i], numeric=i + 1), transform=ax.transAxes,
-                ha=ha , va=va)
+                ha=ha, va=va, **kwargs)
 
 
 def rescaled_axes(scale_x=1, scale_y=1, tx=0, ty=0, ax=None):
