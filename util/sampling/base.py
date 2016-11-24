@@ -1,7 +1,9 @@
 import logging
+import functools as ft
 import numpy as np
 import pandas as pd
-from ..plotting import trace_plot, grid_density_plot, comparison_plot
+from ..plotting import trace_plot, grid_density_plot, comparison_plot, autocorrelation_plot
+
 
 logger = logging.getLogger('util.sampling')
 
@@ -44,46 +46,29 @@ class BaseSampler(object):
         """
         return str(index) if self.parameter_names is None else self.parameter_names[index]
 
+    @ft.wraps(trace_plot)
     def trace_plot(self, burn_in=0, parameters=None, values=None):
-        """
-        Plot the trace of parameters (and horizontal lines indicating the true values).
+        if parameters is None:
+            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
+        return trace_plot(self.samples, self.fun_values, burn_in, parameters, values)
 
-        Parameters
-        ----------
-        burn_in : int
-            number of initial values to discard
-        parameters : iterable
-            indices of the parameters to plot (default is all)
-        values : iterable
-            true values corresponding to the indices in `parameters`
-        """
-        return trace_plot(self.samples, self.fun_values, burn_in, None if parameters is None else
-                          {p: self.get_parameter_name(p) for p in parameters}, values)
-
+    @ft.wraps(grid_density_plot)
     def grid_density_plot(self, burn_in=0, parameters=None, values=None, nrows=None, ncols=None, bins=10):
-        """
-        Plot the marginal densities of parameters (and vertical lines indicating the true values).
+        if parameters is None:
+            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
+        return grid_density_plot(self.samples, burn_in, values, nrows, ncols, bins)
 
-        Parameters
-        ----------
-        burn_in : int
-            number of initial values to discard
-        parameters : iterable
-            indices of the parameters to plot (default is all)
-        values : iterable
-            true values corresponding to the indices in `parameters`
-        nrows : int
-            number of rows in the plot
-        ncols : int
-            number of columns in the plot
-        bins : int
-            number of bins for the histograms
-        """
-        return grid_density_plot(self.samples, burn_in, None if parameters is None else
-                                 {p: self.get_parameter_name(p) for p in parameters}, values, nrows, ncols, bins)
-
+    @ft.wraps(comparison_plot)
     def comparison_plot(self, values, burn_in=0, parameters=None, ax=None, **kwargs):
+        if parameters is None:
+            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
         return comparison_plot(self.samples, values, burn_in, parameters, ax, **kwargs)
+
+    @ft.wraps(autocorrelation_plot)
+    def autocorrelation_plot(self, lag=50, parameters=None, ax=None, **kwargs):
+        if parameters is None:
+            parameters = {p: self.get_parameter_name(p) for p in range(self.samples.shape[1])}
+        return autocorrelation_plot(self.samples, parameters, lag, ax, **kwargs)
 
     def acceptance_rate(self, burn_in=0):
         """

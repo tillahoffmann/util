@@ -4,7 +4,8 @@ import os
 from matplotlib import pyplot as plt, transforms as mtransforms
 import numpy as np
 from scipy.stats import gaussian_kde
-from .util import autospace
+
+from .util import autospace, acorr
 
 
 logger = logging.getLogger('util.plotting')
@@ -138,7 +139,6 @@ def trace_plot(samples, fun_values, burn_in=0, parameters=None, values=None):
     values : iterable
         true values corresponding to the indices in `parameters`
     """
-
     if parameters is None:
         parameters = {i: str(i) for i in range(samples.shape[1])}
     if values is None:
@@ -168,6 +168,40 @@ def trace_plot(samples, fun_values, burn_in=0, parameters=None, values=None):
     logger.info("acceptance ratio %f" %np.mean(x[1:] != x[:-1]))
 
     return fig, (ax1, ax2)
+
+
+def autocorrelation_plot(samples, parameters=None, lag=50, ax=None, **kwargs):
+    """
+    Plot the autocorrelation of samples.
+
+    Parameters
+    ----------
+    samples : np.ndarray
+        samples to plot the autocorrelation for
+    parameters : dict or None
+        dictionary of parameter names keyed by index
+    lag : int
+        maximum lag to consider
+    ax
+        axes to plot into
+    kwargs : dict
+        keyword arguments passed on to `ax.plot`
+    """
+    ax = ax or plt.gca()
+    if parameters is None:
+        parameters = {i: str(i) for i in range(samples.shape[1])}
+
+    # Plot the autocorrelation
+    lines = []
+    for parameter, label in parameters.items():
+        line, = ax.plot(acorr(samples[:, parameter])[:lag], label=label, **kwargs)
+        lines.append(line)
+
+    ax.set_xlabel('Iterations')
+    ax.set_ylabel('Autocorrelation')
+    ax.legend(loc=0, frameon=False)
+
+    return lines
 
 
 def comparison_plot(samples, values, burn_in=0, parameters=None, ax=None, **kwargs):

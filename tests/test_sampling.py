@@ -41,3 +41,14 @@ def test_sampling(mean, covariance, sampler):
     assert sampler.acceptance_rate() > 0, "no samples were accepted"
     sample_mean = np.mean(sampler.samples, axis=0)
     np.testing.assert_array_less(np.abs(sample_mean - mean), np.diag(covariance), "unexpected sample mean")
+
+
+@pytest.fixture(params=['grid_density_plot', 'autocorrelation_plot', 'trace_plot'])
+def plotting_method(request):
+    return request.param
+
+
+@pytest.mark.parametrize('mean, covariance, sampler', args)
+def test_plotting(mean, covariance, sampler, plotting_method):
+    method = getattr(sampler, plotting_method)
+    method()
