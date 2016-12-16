@@ -12,3 +12,4 @@ dependencies:
   - jupyter
   - pylint
   - pytest-cov
+  - tensorflow
