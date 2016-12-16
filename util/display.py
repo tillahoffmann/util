@@ -404,11 +404,15 @@ def plot_edges(edgelist, coordinates, linewidths=None, ax=None, **kwargs):
     ax = ax or plt.gca()
     if linewidths is None:
         linewidths = np.ones(len(edgelist))
+    else:
+        linewidths = np.asarray(linewidths)
+
+    edgelist = np.asarray(edgelist)
 
     # Assemble segments and line widths
     segments = []
     _linewidths = []
-    for i, j, w in zip(*edgelist, linewidths):
+    for i, j, w in zip(*edgelist.T, linewidths):
         if w:
             segments.append((coordinates[i], coordinates[j]))
             _linewidths.append(w)

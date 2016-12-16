@@ -2,7 +2,7 @@ import logging
 import functools as ft
 import numpy as np
 import pandas as pd
-from ..plotting import trace_plot, grid_density_plot, comparison_plot, autocorrelation_plot
+from ..display import trace_plot, grid_density_plot, comparison_plot, autocorrelation_plot
 
 
 logger = logging.getLogger('util.sampling')
