@@ -1,14 +1,14 @@
 import itertools as it
 import logging
 import os
-from matplotlib import pyplot as plt, transforms as mtransforms
+from matplotlib import pyplot as plt, transforms as mtransforms, collections as mcollections
 import numpy as np
 from scipy.stats import gaussian_kde
 
 from .util import autospace, acorr
 
 
-logger = logging.getLogger('util.plotting')
+logger = logging.getLogger(__name__)
 
 
 def kde_plot(x, factor=0.1, ax=None, **kwargs):
@@ -165,7 +165,7 @@ def trace_plot(samples, fun_values, burn_in=0, parameters=None, values=None):
 
     x = samples[burn_in:]
 
-    logger.info("acceptance ratio %f" %np.mean(x[1:] != x[:-1]))
+    logger.info("acceptance ratio %f" , np.mean(x[1:] != x[:-1]))
 
     return fig, (ax1, ax2)
 
@@ -377,3 +377,43 @@ def plot_categories(categories, y, yerr=None, shift=0, ticks=True, tick_rotation
     if yerr is not None:
         yerr = [yerr.get(category, np.nan) for category in categories]
     return ax.errorbar(x + shift, y, yerr, **kwargs)
+
+
+def plot_edges(edgelist, coordinates, linewidths=None, ax=None, **kwargs):
+    """
+    Plot edges.
+
+    Parameters
+    ----------
+    edgelist : np.ndarray
+        `m` by `2` array of `m` edges
+    coordinates : np.ndarray
+        `n` by `2` array of coordinates for `n` nodes
+    linewidths : np.ndarray
+        `m` line widths (edges with line width of zero are not plotted)
+    ax :
+        axes to plot into
+    kwargs : dict
+        keyword arguments passed on to `LineCollection`
+
+    Returns
+    -------
+    edges : LineCollection
+        collection of lines representing the edges
+    """
+    ax = ax or plt.gca()
+    if linewidths is None:
+        linewidths = np.ones(len(edgelist))
+
+    # Assemble segments and line widths
+    segments = []
+    _linewidths = []
+    for i, j, w in zip(*edgelist, linewidths):
+        if w:
+            segments.append((coordinates[i], coordinates[j]))
+            _linewidths.append(w)
+
+    # Add to the axes
+    edges = mcollections.LineCollection(segments, linewidths, **kwargs)
+    ax.add_artist(edges)
+    return edges
