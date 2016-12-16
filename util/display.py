@@ -407,17 +407,17 @@ def plot_edges(edgelist, coordinates, linewidths=None, ax=None, **kwargs):
     else:
         linewidths = np.asarray(linewidths)
 
-    edgelist = np.asarray(edgelist)
+    i, j = np.transpose(edgelist)
 
     # Assemble segments and line widths
     segments = []
     _linewidths = []
-    for i, j, w in zip(*edgelist.T, linewidths):
+    for i, j, w in zip(i, j, linewidths):
         if w:
             segments.append((coordinates[i], coordinates[j]))
             _linewidths.append(w)
 
     # Add to the axes
-    edges = mcollections.LineCollection(segments, linewidths, **kwargs)
+    edges = mcollections.LineCollection(segments, _linewidths, **kwargs)
     ax.add_artist(edges)
     return edges
