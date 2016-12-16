@@ -18,6 +18,7 @@ class Model:
         learning rate of the optimizer used to maximize the posterior
     """
     def __init__(self, parameters, prior='flat', learning_rate=0.01):
+        parameters = np.asarray(parameters)
         # Store parameters
         self._prior = prior
         self._learning_rate = learning_rate
@@ -29,6 +30,11 @@ class Model:
             self.likelihood = self.build_likelihood()
             self.prior = self.build_prior()
             self.posterior = self.likelihood + self.prior
+
+            # Add the posterior covariance
+            if parameters.ndim == 1:
+                hessian, = tf.hessians(self.posterior, self.parameters)
+                self.posterior_cov = - tf.matrix_inverse(hessian)
 
             # Set up the optimizer
             self.optimizer = self.create_optimizer()
@@ -169,20 +175,3 @@ class Model:
         for _ in range(steps):
             _, parameters, posterior = self.run(['train_op', 'parameters', 'posterior'], feed_dict, **kwargs)
         return parameters, posterior
-
-    def describe(self):
-        """
-        Obtain a summary for the coefficients.
-
-        Returns
-        -------
-        summary :
-            summary of the coefficients
-        """
-        map_estimate = self.run(self.coefficients)
-        map_err = np.sqrt(np.diag(self.posterior_covariance))
-
-        summary = []
-        for i, (name, _) in enumerate(self.design_matrix_dtypes):
-            summary.append((name, map_estimate[i], map_err[i]))
-        return summary

@@ -40,3 +40,8 @@ def model(data):
 def test_optimize(model):
     parameters, posterior = model.optimize(100)
     np.testing.assert_allclose(parameters, model.desired, atol=0.1, err_msg='unexpected parameter values')
+
+
+def test_posterior_cov(model):
+    cov = model.run('posterior_cov')
+    assert np.all(np.linalg.eigvalsh(cov) > 0), "posterior covariance must be positive definite"
