@@ -1,8 +1,10 @@
-import numpy as np
-import json, base64
+import logging
+import json
+import base64
 import functools
 from time import time
-import logging
+import tensorflow as tf
+import numpy as np
 from scipy import optimize
 
 
@@ -387,3 +389,20 @@ def acorr(x, ax=None):
     autocorr /= autocorr.max()
 
     return autocorr
+
+
+def iterable(x):
+    """
+    Check whether the input is iterable but not a string.
+
+    Parameters
+    ----------
+    x
+        input to check
+
+    Returns
+    -------
+    iterable : bool
+        whether the input is iterable but not a string
+    """
+    return hasattr(x, '__iter__') and not isinstance(x, (str, bytes, tf.Variable, tf.Tensor))
