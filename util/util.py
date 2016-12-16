@@ -387,3 +387,20 @@ def acorr(x, ax=None):
     autocorr /= autocorr.max()
 
     return autocorr
+
+
+def iterable(x):
+    """
+    Check whether the input is iterable but not a string.
+
+    Parameters
+    ----------
+    x
+        input to check
+
+    Returns
+    -------
+    iterable : bool
+        whether the input is iterable but not a string
+    """
+    return hasattr(x, '__iter__') and not isinstance(x, (str, bytes, tf.Variable, tf.Tensor))
