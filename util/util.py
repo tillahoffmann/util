@@ -1,8 +1,10 @@
-import numpy as np
-import json, base64
+import logging
+import json
+import base64
 import functools
 from time import time
-import logging
+import tensorflow as tf
+import numpy as np
 from scipy import optimize
 
 
