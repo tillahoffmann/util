@@ -64,6 +64,7 @@ def square_array(linear, directed=True):
     square_array : np.ndarray
         square matrix
     """
+    linear = np.asarray(linear)
     n = square_size(len(linear), directed)
     i, j = offdiag_indices(n, directed)
     square = np.zeros((n, n), linear.dtype)
@@ -89,5 +90,6 @@ def linear_array(square, directed=True):
     linear : np.ndarray
         condensed matrix
     """
+    square = np.asarray(square)
     i, j = offdiag_indices(square.shape[0], directed)
     return square[i, j]
