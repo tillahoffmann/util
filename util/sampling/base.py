@@ -2,7 +2,10 @@ import logging
 import functools as ft
 import numpy as np
 import pandas as pd
+from scipy import stats
+
 from ..display import trace_plot, grid_density_plot, comparison_plot, autocorrelation_plot
+from ..util import autospace
 
 
 logger = logging.getLogger('util.sampling')
@@ -141,3 +144,37 @@ class BaseSampler(object):
         if not self._samples:
             raise RuntimeError("cannot determine number of parameters if no samples have been drawn")
         return len(self._samples[0])
+
+
+def hpd_interval(samples, alpha=0.05, lin=200):
+    """
+    Compute the highest posterior density interval using a Gaussian kernel density estimate.
+
+    Parameters
+    ----------
+    samples : np.ndarray
+    alpha : float
+    lin : np.ndarray or int
+
+    Returns
+    -------
+    lower
+    upper
+    continuous
+    """
+    # Get a linear spacing
+    if isinstance(lin, int):
+        lin = autospace(samples, lin)
+
+    # Compute the KDE
+    kde = stats.gaussian_kde(samples)
+    y = kde(lin)
+
+    # Compute the cumulative distribution
+    idx = np.argsort(y)
+    cumulative = np.cumsum(y[idx])
+
+    # Get indices after applying a threshold
+    idx = np.sort(idx[cumulative > cumulative[-1] * alpha])
+
+    return lin[idx[0]], lin[idx[-1]], np.all(np.diff(idx) == 1)

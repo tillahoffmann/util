@@ -1,4 +1,4 @@
-from util import sampling, log_gaussian
+from util import sampling, log_gaussian, hpd_interval
 import pytest
 import numpy as np
 
@@ -52,3 +52,17 @@ def plotting_method(request):
 def test_plotting(mean, covariance, sampler, plotting_method):
     method = getattr(sampler, plotting_method)
     method()
+
+
+def test_hpd_interval():
+    x = np.random.normal(0, 1, 10000)
+    lower, upper, continuous = hpd_interval(x)
+    assert lower < 0, "expected negative lower bound"
+    assert upper > 0, "expected positive upper bound"
+    assert upper - lower > 3, "expected larger interval"
+    assert upper - lower < 5, "expected smaller interval"
+    assert continuous, "expected a continuous interval"
+
+
+def test_foo():
+    pass
