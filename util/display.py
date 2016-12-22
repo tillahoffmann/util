@@ -4,6 +4,7 @@ import os
 from matplotlib import pyplot as plt, transforms as mtransforms, collections as mcollections
 import numpy as np
 from scipy.stats import gaussian_kde
+import numbers
 
 from .util import autospace, acorr
 
@@ -375,10 +376,14 @@ def plot_categories(categories, y, yerr=None, shift=0, ticks=True, tick_rotation
 
     y = [y.get(category, np.nan) for category in categories]
     if yerr is not None:
-        yerr = np.asarray([yerr.get(category, np.nan) for category in categories])
-        # Transpose if more than one dimension
-        if yerr.ndim == 2:
+        if yerr and not isinstance(next(iter(yerr.values())), numbers.Number):
+            missing = (np.nan, np.nan)
+        else:
+            missing = np.nan
+        yerr = np.asarray([yerr.get(category, missing) for category in categories])
+        if np.ndim(yerr) == 2:
             yerr = np.transpose(yerr)
+
     return ax.errorbar(x + shift, y, yerr, **kwargs)
 
 
