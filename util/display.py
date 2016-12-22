@@ -375,7 +375,10 @@ def plot_categories(categories, y, yerr=None, shift=0, ticks=True, tick_rotation
 
     y = [y.get(category, np.nan) for category in categories]
     if yerr is not None:
-        yerr = [yerr.get(category, np.nan) for category in categories]
+        yerr = np.asarray([yerr.get(category, np.nan) for category in categories])
+        # Transpose if more than one dimension
+        if yerr.ndim == 2:
+            yerr = np.transpose(yerr)
     return ax.errorbar(x + shift, y, yerr, **kwargs)
 
 
