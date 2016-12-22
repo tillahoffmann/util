@@ -62,7 +62,3 @@ def test_hpd_interval():
     assert upper - lower > 3, "expected larger interval"
     assert upper - lower < 5, "expected smaller interval"
     assert continuous, "expected a continuous interval"
-
-
-def test_foo():
-    pass
