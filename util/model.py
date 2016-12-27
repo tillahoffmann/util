@@ -33,8 +33,8 @@ class Model:
 
             # Add the posterior covariance
             if parameters.ndim == 1:
-                hessian, = tf.hessians(self.posterior, self.parameters)
-                self.posterior_cov = - tf.matrix_inverse(hessian)
+                self.posterior_hess, = tf.hessians(self.posterior, self.parameters)
+                self.posterior_cov = - tf.matrix_inverse(self.posterior_hess)
 
             # Set up the optimizer
             self.optimizer = self.create_optimizer()
