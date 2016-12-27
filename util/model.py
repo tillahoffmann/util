@@ -31,6 +31,9 @@ class Model:
             self.prior = self.build_prior()
             self.posterior = self.likelihood + self.prior
 
+            # Add the posterior gradient
+            self.posterior_grad, = tf.gradients(self.posterior, self.parameters)
+
             # Add the posterior covariance
             if parameters.ndim == 1:
                 self.posterior_hess, = tf.hessians(self.posterior, self.parameters)
