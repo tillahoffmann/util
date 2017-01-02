@@ -17,8 +17,9 @@ class Model:
     learning_rate : float
         learning rate of the optimizer used to maximize the posterior
     """
-    def __init__(self, parameters, prior='flat', learning_rate=0.01):
+    def __init__(self, parameters, prior='flat', learning_rate=0.01, floatX=tf.float32):
         parameters = np.asarray(parameters)
+        self.floatX = floatX
         # Store parameters
         self._prior = prior
         self._learning_rate = learning_rate
@@ -26,7 +27,7 @@ class Model:
         self.graph = self.create_graph()
         with self.graph.as_default():
             # Initialise parameters
-            self.parameters = tf.Variable(parameters, name='parameters', dtype=tf.float32)
+            self.parameters = tf.Variable(parameters, name='parameters', dtype=self.floatX)
             self.likelihood = self.build_likelihood()
             self.prior = self.build_prior()
             self.posterior = self.likelihood + self.prior
@@ -104,7 +105,7 @@ class Model:
         """
         Create a tensorflow optimizer.
         """
-        self.learning_rate = tf.Variable(self._learning_rate, False, name='learning_rate', dtype=tf.float32)
+        self.learning_rate = tf.Variable(self._learning_rate, False, name='learning_rate', dtype=self.floatX)
         return tf.train.AdamOptimizer(self.learning_rate)
 
     def as_operation(self, operation):
