@@ -9,10 +9,6 @@ install:
   - conda env create
   - source activate util
   - pip install -e .
-  # Make sure we don't try to use pyqt
-  - echo backend:agg > matplotlibrc
-  # Get the RC of tensorflow for hessians (TODO: use conda)
-  - pip install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.12.0rc1-cp35-cp35m-linux_x86_64.whl
 
 script:
   - make tests
