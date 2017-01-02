@@ -64,7 +64,7 @@ class Model:
 
     def initialize_variables(self):
         with self.graph.as_default():
-            init_op = tf.initialize_all_variables()
+            init_op = tf.global_variables_initializer()
             self.session.run(init_op)
 
     @property
