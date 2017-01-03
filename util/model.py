@@ -30,7 +30,7 @@ class Model:
             self.parameters = tf.Variable(parameters, name='parameters', dtype=self.floatX)
             self.likelihood = self.build_likelihood()
             self.prior = self.build_prior()
-            self.posterior = self.likelihood + self.prior
+            self.posterior = tf.add(self.likelihood, self.prior, 'posterior')
 
             # Add the posterior gradient
             self.posterior_grad, = tf.gradients(self.posterior, self.parameters)
@@ -86,7 +86,7 @@ class Model:
         if callable(self._prior):
             return self._prior(self.parameters)
         elif self._prior == 'flat':
-            return 0
+            return tf.constant(0, dtype=self.floatX, name='flat_prior')
         else:
             raise KeyError(self._prior)
 
