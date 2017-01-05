@@ -178,4 +178,6 @@ class Model:
         parameters, posterior = None, None
         for _ in range(steps):
             _, parameters, posterior = self.run(['train_op', 'parameters', 'posterior'], feed_dict, **kwargs)
+            assert np.all(np.isfinite(parameters)), "not all parameters are finite"
+            assert np.isfinite(posterior), "the posterior is not finite"
         return parameters, posterior
