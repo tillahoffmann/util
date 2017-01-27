@@ -155,6 +155,23 @@ class Model:
         # Run the tensorflow session
         return self.session.run(fetches, feed_dict)
 
+    def evaluate_posterior(self, parameters=None):
+        """
+        Evaluate the posterior of the model.
+
+        Parameters
+        ----------
+        parameters : np.ndarray
+            parameters at which to evaluate the posterior or `None` to use the current state
+
+        Returns
+        -------
+        posterior : float
+            posterior of the model
+        """
+        feed_dict = {} if parameters is None else {self.parameters: parameters}
+        return self.session.run(self.posterior, feed_dict)
+
     def optimize(self, steps=1, feed_dict=None, **kwargs):
         """
         Take one or more steps to maximize the posterior.
