@@ -11,4 +11,4 @@ install:
   - pip install -e .
 
 script:
-  - make tests
+  - MPLBACKEND=tkagg make tests
