@@ -10,4 +10,4 @@ install:
   - pip install -e .
 
 script:
-  - MPLBACKEND=cairo make tests
+  - make tests
