@@ -70,8 +70,8 @@ class BaseSampler(object):
         return comparison_plot(self.samples, values, burn_in, self._parameter_dict(parameters), ax, **kwargs)
 
     @ft.wraps(autocorrelation_plot)
-    def autocorrelation_plot(self, lag=50, parameters=None, ax=None, **kwargs):
-        return autocorrelation_plot(self.samples, self._parameter_dict(parameters), lag, ax, **kwargs)
+    def autocorrelation_plot(self, burn_in=0, lag=50, parameters=None, ax=None, **kwargs):
+        return autocorrelation_plot(self.samples, burn_in, self._parameter_dict(parameters), lag, ax, **kwargs)
 
     def acceptance_rate(self, burn_in=0):
         """
