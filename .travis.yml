@@ -11,4 +11,4 @@ install:
   - pip install -e .
 
 script:
-  - MPLBACKEND=agg make tests
+  - MPLBACKEND=cairo make tests
