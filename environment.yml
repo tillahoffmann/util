@@ -2,7 +2,7 @@ name: util
 channels:
   - conda-forge
 dependencies:
-  - python>=3.5
+  - python=3.5
   - numpy
   - pytest
   - scipy
