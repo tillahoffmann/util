@@ -171,7 +171,7 @@ def trace_plot(samples, fun_values, burn_in=0, parameters=None, values=None):
     return fig, (ax1, ax2)
 
 
-def autocorrelation_plot(samples, parameters=None, lag=50, ax=None, **kwargs):
+def autocorrelation_plot(samples, burn_in=0, parameters=None, lag=50, ax=None, **kwargs):
     """
     Plot the autocorrelation of samples.
 
@@ -195,7 +195,7 @@ def autocorrelation_plot(samples, parameters=None, lag=50, ax=None, **kwargs):
     # Plot the autocorrelation
     lines = []
     for parameter, label in parameters.items():
-        line, = ax.plot(acorr(samples[:, parameter])[:lag], label=label, **kwargs)
+        line, = ax.plot(acorr(samples[burn_in:, parameter])[:lag], label=label, **kwargs)
         lines.append(line)
 
     ax.set_xlabel('Iterations')
