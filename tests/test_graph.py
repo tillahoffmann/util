@@ -23,7 +23,7 @@ def test_square_size(directed):
 
 
 def test_square_array(directed):
-    x = np.random.normal(0, 1, (100 * 99) if directed else (100 * 99 / 2))
+    x = np.random.normal(0, 1, (100 * 99) if directed else (100 * 99 // 2))
     square = util.square_array(x, directed)
     if not directed:
         np.testing.assert_equal(square, square.T, 'square array must be symmetric')
@@ -36,11 +36,11 @@ def test_linear_array(directed):
     if directed:
         assert len(linear) == 100 * 99, "unexpected length"
     else:
-        assert len(linear) == 100 * 99 / 2, "unexpected length"
+        assert len(linear) == 100 * 99 // 2, "unexpected length"
 
 
 def test_linear_square_linear_array(directed):
-    desired = np.random.normal(0, 1, (100 * 99) if directed else (100 * 99 / 2))
+    desired = np.random.normal(0, 1, (100 * 99) if directed else (100 * 99 // 2))
     square = util.square_array(desired, directed)
     actual = util.linear_array(square, directed)
     np.testing.assert_equal(actual, desired, 'could not recover linear array')
