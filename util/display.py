@@ -63,7 +63,7 @@ def density_plot(samples, burn_in=0, step=1, name=None, value=None, bins=10, num
         ax.hist(x, bins, normed=True, histtype='stepfilled', facecolor='silver', edgecolor='none')
 
     # Plot the kde
-    kde_plot(x, num, ax=ax, **kwargs)
+    kde_plot(x, num=num, ax=ax, **kwargs)
     if name:
         ax.set_xlabel(name)
 
