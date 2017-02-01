@@ -1,10 +1,10 @@
 import itertools as it
 import logging
 import os
+import numbers
 from matplotlib import pyplot as plt, transforms as mtransforms, collections as mcollections
 import numpy as np
 from scipy.stats import gaussian_kde
-import numbers
 
 from .util import autospace, acorr
 
@@ -12,7 +12,7 @@ from .util import autospace, acorr
 logger = logging.getLogger(__name__)
 
 
-def kde_plot(x, factor=0.1, ax=None, **kwargs):
+def kde_plot(x, factor=0.1, num=50, ax=None, **kwargs):
     """
     Plot a univariate kernel density estimate.
 
@@ -29,12 +29,12 @@ def kde_plot(x, factor=0.1, ax=None, **kwargs):
     """
     ax = ax or plt.gca()
     kde = gaussian_kde(x)
-    linx = autospace(x, factor=factor)
+    linx = autospace(x, num, factor=factor)
     y = kde(linx)
     return ax.plot(linx, y, **kwargs)
 
 
-def density_plot(samples, burn_in=0, step=1, name=None, value=None, bins=10, ax=None, **kwargs):
+def density_plot(samples, burn_in=0, step=1, name=None, value=None, bins=10, num=50, ax=None, **kwargs):
     """
     Plot the density of a parameter (and a vertical indicating the true value).
 
@@ -63,7 +63,7 @@ def density_plot(samples, burn_in=0, step=1, name=None, value=None, bins=10, ax=
         ax.hist(x, bins, normed=True, histtype='stepfilled', facecolor='silver', edgecolor='none')
 
     # Plot the kde
-    kde_plot(x, ax=ax, **kwargs)
+    kde_plot(x, num, ax=ax, **kwargs)
     if name:
         ax.set_xlabel(name)
 
