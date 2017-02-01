@@ -8,7 +8,7 @@ import numpy as np
 from scipy import optimize
 
 
-def autospace(x, num=50, mode='lin', factor=0.1):
+def autospace(x, factor=0.1, num=50, mode='lin'):
     """
     Get a vector with equal spacing whose range is determined by `x`.
 

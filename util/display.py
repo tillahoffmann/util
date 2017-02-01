@@ -29,7 +29,7 @@ def kde_plot(x, factor=0.1, num=50, ax=None, **kwargs):
     """
     ax = ax or plt.gca()
     kde = gaussian_kde(x)
-    linx = autospace(x, num, factor=factor)
+    linx = autospace(x, factor, num)
     y = kde(linx)
     return ax.plot(linx, y, **kwargs)
 
