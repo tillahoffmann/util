@@ -201,6 +201,7 @@ def autocorrelation_plot(samples, burn_in=0, parameters=None, lag=50, ax=None, *
     ax.set_xlabel('Iterations')
     ax.set_ylabel('Autocorrelation')
     ax.legend(loc=0, frameon=False)
+    ax.axhline(0, color='k', ls=':')
 
     return lines
 
