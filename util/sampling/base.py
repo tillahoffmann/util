@@ -61,9 +61,9 @@ class BaseSampler(object):
         return trace_plot(self.samples, self.fun_values, burn_in, self._parameter_dict(parameters), values)
 
     @ft.wraps(grid_density_plot)
-    def grid_density_plot(self, burn_in=0, parameters=None, values=None, nrows=None, ncols=None, bins=10, **kwargs):
-        return grid_density_plot(self.samples, burn_in, self._parameter_dict(parameters), values, nrows, ncols, bins,
-                                 **kwargs)
+    def grid_density_plot(self, burn_in=0, step=1, parameters=None, values=None, nrows=None, ncols=None, bins=10, **kwargs):
+        return grid_density_plot(self.samples, burn_in, step, self._parameter_dict(parameters), values, nrows, ncols,
+                                 bins, **kwargs)
 
     @ft.wraps(comparison_plot)
     def comparison_plot(self, values, burn_in=0, parameters=None, ax=None, **kwargs):

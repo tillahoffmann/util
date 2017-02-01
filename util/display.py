@@ -34,7 +34,7 @@ def kde_plot(x, factor=0.1, ax=None, **kwargs):
     return ax.plot(linx, y, **kwargs)
 
 
-def density_plot(samples, burn_in=0, name=None, value=None, bins=10, ax=None, **kwargs):
+def density_plot(samples, burn_in=0, step=1, name=None, value=None, bins=10, ax=None, **kwargs):
     """
     Plot the density of a parameter (and a vertical indicating the true value).
 
@@ -44,6 +44,8 @@ def density_plot(samples, burn_in=0, name=None, value=None, bins=10, ax=None, **
         samples of the parameters
     burn_in : int
         number of initial values to discard
+    step : int
+        lag between consecutive samples
     name : str
         name of the parameter
     value : float
@@ -54,7 +56,7 @@ def density_plot(samples, burn_in=0, name=None, value=None, bins=10, ax=None, **
         axes to plot into
     """
     ax = ax or plt.gca()
-    x = samples[burn_in:]
+    x = samples[burn_in::step]
 
     # Create a histogram
     if bins is not None:
@@ -70,7 +72,7 @@ def density_plot(samples, burn_in=0, name=None, value=None, bins=10, ax=None, **
         ax.axvline(value, ls='dotted', color='r')
 
 
-def grid_density_plot(samples, burn_in=0, parameters=None, values=None, nrows=None, ncols=None, bins=10, **kwargs):
+def grid_density_plot(samples, burn_in=0, step=1, parameters=None, values=None, nrows=None, ncols=None, bins=10, **kwargs):
     """
     Plot the marginal densities of parameters  (and vertical lines indicating the true values).
 
@@ -115,11 +117,9 @@ def grid_density_plot(samples, burn_in=0, parameters=None, values=None, nrows=No
             break
 
         # Plot the individual density estimate
-        density_plot(samples[:, parameter], burn_in, parameters[parameter], value, bins, ax, **kwargs)
-
+        density_plot(samples[:, parameter], burn_in, step, parameters[parameter], value, bins, ax, **kwargs)
 
     fig.tight_layout()
-
     return fig, axes
 
 
