@@ -61,7 +61,8 @@ class BaseSampler(object):
         return trace_plot(self.samples, self.fun_values, burn_in, self._parameter_dict(parameters), values)
 
     @ft.wraps(grid_density_plot)
-    def grid_density_plot(self, burn_in=0, step=1, parameters=None, values=None, nrows=None, ncols=None, bins=10, **kwargs):
+    def grid_density_plot(self, burn_in=0, step=1, parameters=None, values=None, nrows=None, ncols=None, bins=10,
+            **kwargs):
         return grid_density_plot(self.samples, burn_in, step, self._parameter_dict(parameters), values, nrows, ncols,
                                  bins, **kwargs)
 
@@ -164,7 +165,7 @@ def hpd_interval(samples, alpha=0.05, lin=200):
     """
     # Get a linear spacing
     if isinstance(lin, int):
-        lin = autospace(samples, lin)
+        lin = autospace(samples, num=lin)
 
     # Compute the KDE
     kde = stats.gaussian_kde(samples)

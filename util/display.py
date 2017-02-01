@@ -117,7 +117,7 @@ def grid_density_plot(samples, burn_in=0, step=1, parameters=None, values=None, 
             break
 
         # Plot the individual density estimate
-        density_plot(samples[:, parameter], burn_in, step, parameters[parameter], value, bins, ax, **kwargs)
+        density_plot(samples[:, parameter], burn_in, step, parameters[parameter], value, bins, ax=ax, **kwargs)
 
     fig.tight_layout()
     return fig, axes
