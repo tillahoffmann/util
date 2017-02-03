@@ -62,7 +62,7 @@ class BaseSampler(object):
 
     @ft.wraps(grid_density_plot)
     def grid_density_plot(self, burn_in=0, step=1, parameters=None, values=None, nrows=None, ncols=None, bins=10,
-            **kwargs):
+                          **kwargs):
         return grid_density_plot(self.samples, burn_in, step, self._parameter_dict(parameters), values, nrows, ncols,
                                  bins, **kwargs)
 
@@ -145,6 +145,11 @@ class BaseSampler(object):
         if not self._samples:
             raise RuntimeError("cannot determine number of parameters if no samples have been drawn")
         return len(self._samples[0])
+
+    def clear(self):
+        """Clear all samples and function values."""
+        self._samples = []
+        self._fun_values = []
 
 
 def hpd_interval(samples, alpha=0.05, lin=200):
