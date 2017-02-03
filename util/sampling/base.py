@@ -23,17 +23,14 @@ class BaseSampler(object):
         additional arguments to pass to `fun`
     parameter_names : list
         list of parameter names
-    break_on_interrupt : bool
-        stop the sampler rather than throwing an exception upon a keyboard interrupt
     """
-    def __init__(self, fun, args=None, parameter_names=None, break_on_interrupt=True):
+    def __init__(self, fun, args=None, parameter_names=None):
         if not callable(fun):
             raise ValueError("`fun` must be callable")
 
         self.fun = fun
         self.args = [] if args is None else args
         self.parameter_names = parameter_names
-        self.break_on_interrupt = break_on_interrupt
 
         self._samples = []
         self._fun_values = []

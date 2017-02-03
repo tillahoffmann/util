@@ -20,8 +20,6 @@ class HamiltonianSampler(BaseSampler):
         additional arguments to pass to `fun`
     parameter_names : list
         list of parameter names
-    break_on_interrupt : bool
-        stop the sampler rather than throwing an exception upon a keyboard interrupt
     jac : callable
         derivative of `fun`. If `jac` is not given, `fun` must return the function value and the derivative.
     mass : array_like
@@ -31,9 +29,8 @@ class HamiltonianSampler(BaseSampler):
     leapfrog_steps : int
         number of leapfrog steps for each sample
     """
-    def __init__(self, fun, args=None, parameter_names=None, break_on_interrupt=True, jac=None, mass=1.0, epsilon=0.1,
-                 leapfrog_steps=10):
-        super(HamiltonianSampler, self).__init__(fun, args, parameter_names, break_on_interrupt)
+    def __init__(self, fun, args=None, parameter_names=None, jac=None, mass=1.0, epsilon=0.1, leapfrog_steps=10):
+        super(HamiltonianSampler, self).__init__(fun, args, parameter_names)
         self.jac = jac
         # Load the mass matrix from disk if given
         if isinstance(mass, str):
@@ -121,81 +118,75 @@ class HamiltonianSampler(BaseSampler):
         leapfrog_steps = leapfrog_steps or self.leapfrog_steps
         epsilon = epsilon or self.epsilon
 
-        try:
-            for step in steps if hasattr(steps, '__iter__') else range(steps):
-                # Sample the momentum
-                if self.mass.ndim < 2:
-                    momentum = np.random.normal(0, 1, p) * np.sqrt(self.mass)
-                else:
-                    momentum = np.random.multivariate_normal(np.zeros(p), self.mass)
-                # Compute the kinetic energy
-                kinetic = self.evaluate_kinetic(momentum)
+        for step in steps if hasattr(steps, '__iter__') else range(steps):
+            # Sample the momentum
+            if self.mass.ndim < 2:
+                momentum = np.random.normal(0, 1, p) * np.sqrt(self.mass)
+            else:
+                momentum = np.random.multivariate_normal(np.zeros(p), self.mass)
+            # Compute the kinetic energy
+            kinetic = self.evaluate_kinetic(momentum)
 
+            # Evaluate the Jacobian
+            if self.jac:
+                jac = self.jac(parameters, *self.args)
+                fun_value = self.fun(parameters, *self.args)
+            else:
+                fun_value, jac = self.fun(parameters, *self.args)
+
+            # Evolve the variables
+            fun_value_end = None
+            parameters_end = parameters
+            # Initialise the sequence for full output
+            if full:
+                params_sequence = [parameters_end.copy()]
+                energy_sequence = [(fun_value, kinetic)]
+
+            for _ in range(leapfrog_steps):
+                # Make a half step for the leapfrog algorithm
+                momentum = momentum + 0.5 * epsilon * jac
+                # Update the position
+                if self.mass.ndim < 2:
+                    parameters_end = parameters_end + epsilon * self.inv_mass * momentum
+                else:
+                    parameters_end = parameters_end + epsilon * self.inv_mass.dot(momentum)
                 # Evaluate the Jacobian
                 if self.jac:
-                    jac = self.jac(parameters, *self.args)
-                    fun_value = self.fun(parameters, *self.args)
+                    jac = self.jac(parameters_end, *self.args)
                 else:
-                    fun_value, jac = self.fun(parameters, *self.args)
+                    fun_value_end, jac = self.fun(parameters_end, *self.args)
+                # Make another half-step
+                momentum = momentum + 0.5 * epsilon * jac
 
-                # Evolve the variables
-                fun_value_end = None
-                parameters_end = parameters
-                # Initialise the sequence for full output
                 if full:
-                    params_sequence = [parameters_end.copy()]
-                    energy_sequence = [(fun_value, kinetic)]
+                    # Append parameters
+                    params_sequence.append(parameters_end)
+                    # Evaluate the function value if necessary
+                    if fun_value_end is None:
+                        fun_value_end = self.fun(parameters_end, *self.args)
+                    # Evaluate the kinetic energy
+                    kinetic_end = self.evaluate_kinetic(momentum)
+                    energy_sequence.append((fun_value_end, kinetic_end))
+                    # Make sure the value gets recomputed in the next iteration
+                    fun_value_end = None
 
-                for _ in range(leapfrog_steps):
-                    # Make a half step for the leapfrog algorithm
-                    momentum = momentum + 0.5 * epsilon * jac
-                    # Update the position
-                    if self.mass.ndim < 2:
-                        parameters_end = parameters_end + epsilon * self.inv_mass * momentum
-                    else:
-                        parameters_end = parameters_end + epsilon * self.inv_mass.dot(momentum)
-                    # Evaluate the Jacobian
-                    if self.jac:
-                        jac = self.jac(parameters_end, *self.args)
-                    else:
-                        fun_value_end, jac = self.fun(parameters_end, *self.args)
-                    # Make another half-step
-                    momentum = momentum + 0.5 * epsilon * jac
+            # Evaluate the function value if necessary
+            if fun_value_end is None:
+                fun_value_end = self.fun(parameters_end, *self.args)
 
-                    if full:
-                        # Append parameters
-                        params_sequence.append(parameters_end)
-                        # Evaluate the function value if necessary
-                        if fun_value_end is None:
-                            fun_value_end = self.fun(parameters_end, *self.args)
-                        # Evaluate the kinetic energy
-                        kinetic_end = self.evaluate_kinetic(momentum)
-                        energy_sequence.append((fun_value_end, kinetic_end))
-                        # Make sure the value gets recomputed in the next iteration
-                        fun_value_end = None
+            # Evaluate the kinetic energy
+            kinetic_end = self.evaluate_kinetic(momentum)
 
-                # Evaluate the function value if necessary
-                if fun_value_end is None:
-                    fun_value_end = self.fun(parameters_end, *self.args)
+            # Accept or reject the step
+            if np.log(np.random.uniform()) < fun_value_end + kinetic_end - fun_value - kinetic:
+                parameters = parameters_end
+                fun_value = fun_value_end
 
-                # Evaluate the kinetic energy
-                kinetic_end = self.evaluate_kinetic(momentum)
+            self._samples.append(parameters.copy())
+            self._fun_values.append(fun_value)
 
-                # Accept or reject the step
-                if np.log(np.random.uniform()) < fun_value_end + kinetic_end - fun_value - kinetic:
-                    parameters = parameters_end
-                    fun_value = fun_value_end
-
-                self._samples.append(parameters.copy())
-                self._fun_values.append(fun_value)
-
-                if callback:
-                    callback(parameters)
-        except KeyboardInterrupt as ex:
-            logger.info('sampling cancelled by keyboard interrupt after %d steps', step)
-            # Reraise the exception if we are not just breaking on interrupt
-            if not self.break_on_interrupt:
-                raise ex
+            if callback:
+                callback(parameters)
 
         if not full:
             return parameters
