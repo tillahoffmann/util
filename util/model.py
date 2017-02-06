@@ -1,4 +1,12 @@
-import tensorflow as tf
+import logging
+
+logger = logging.getLogger(__name__)
+
+try:
+    import tensorflow as tf
+except ImportError:
+    logger.warning('could not import tensorflow')
+
 import numpy as np
 
 from .util import iterable
