@@ -25,9 +25,9 @@ class Model:
     learning_rate : float
         learning rate of the optimizer used to maximize the posterior
     """
-    def __init__(self, parameters, prior='flat', learning_rate=0.01, floatX=tf.float32):
+    def __init__(self, parameters, prior='flat', learning_rate=0.01, floatX=None):
         parameters = np.asarray(parameters)
-        self.floatX = floatX
+        self.floatX = floatX or tf.float32
         # Store parameters
         self._prior = prior
         self._learning_rate = learning_rate
