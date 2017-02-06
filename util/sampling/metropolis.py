@@ -59,6 +59,15 @@ class MetropolisSampler(BaseSampler):
 
         return parameters
 
+    @property
+    def fun_values(self):
+        """
+        Get the function values.
+        """
+        if self.mode == 'reevaluate':
+            logging.warning("function values may not be interpretable in the 'reevaluate' mode")
+        return np.asarray(self._fun_values)
+
 
 class AdaptiveMetropolisSampler(MetropolisSampler):
     """

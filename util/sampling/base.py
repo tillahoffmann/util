@@ -8,7 +8,7 @@ from ..display import trace_plot, grid_density_plot, comparison_plot, autocorrel
 from ..util import autospace
 
 
-logger = logging.getLogger('util.sampling')
+logger = logging.getLogger(__name__)
 
 
 class BaseSampler(object):
