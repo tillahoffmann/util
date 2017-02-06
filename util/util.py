@@ -1,9 +1,13 @@
 import logging
+logger = logging.getLogger(__name__)
 import json
 import base64
 import functools
 from time import time
-import tensorflow as tf
+try:
+    import tensorflow as tf
+except ImportError:
+    logger.warning('could not import tensorflow')
 import numpy as np
 from scipy import optimize
 
