@@ -206,6 +206,39 @@ def autocorrelation_plot(samples, burn_in=0, parameters=None, lag=50, ax=None, *
     return lines
 
 
+def covariance_plot(samples, burn_in=0, step=1, parameters=None, rowvar=False, xrotation=-45, ax=None, **kwargs):
+    """
+
+    """
+    if parameters is None:
+        idx = np.arange(samples.shape[1])
+        labels = idx.astype(str)
+    else:
+        idx = list(parameters.keys())
+        labels = list(parameters.values())
+
+    # Plot the covariance matrix
+    cov = np.cov(samples[burn_in::step, idx], rowvar=rowvar)
+    vmax = np.max(np.abs(cov))
+    kwargs_default = {
+        'vmax': vmax,
+        'vmin': -vmax,
+        'cmap': 'coolwarm',
+    }
+    kwargs_default.update(kwargs)
+    ax = ax or plt.gca()
+    im = ax.imshow(cov, **kwargs_default)
+
+    # Set the labels
+    x = np.arange(len(labels))
+    ax.xaxis.set_ticks(x)
+    ax.xaxis.set_ticklabels(labels, rotation=xrotation)
+    ax.yaxis.set_ticks(x)
+    ax.yaxis.set_ticklabels(labels)
+
+    return im
+
+
 def comparison_plot(samples, values, burn_in=0, parameters=None, ax=None, **kwargs):
     """
     Plot inferred against actual parameters.

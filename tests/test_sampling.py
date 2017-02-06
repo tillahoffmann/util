@@ -43,7 +43,7 @@ def test_sampling(mean, covariance, sampler):
     np.testing.assert_array_less(np.abs(sample_mean - mean), np.diag(covariance), "unexpected sample mean")
 
 
-@pytest.fixture(params=['grid_density_plot', 'autocorrelation_plot', 'trace_plot'])
+@pytest.fixture(params=['grid_density_plot', 'autocorrelation_plot', 'trace_plot', 'covariance_plot'])
 def plotting_method(request):
     return request.param
 

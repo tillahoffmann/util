@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from ..display import trace_plot, grid_density_plot, comparison_plot, autocorrelation_plot
+from ..display import trace_plot, grid_density_plot, comparison_plot, autocorrelation_plot, covariance_plot
 from ..util import autospace
 
 
@@ -70,6 +70,11 @@ class BaseSampler(object):
     @ft.wraps(autocorrelation_plot)
     def autocorrelation_plot(self, burn_in=0, lag=50, parameters=None, ax=None, **kwargs):
         return autocorrelation_plot(self.samples, burn_in, self._parameter_dict(parameters), lag, ax, **kwargs)
+
+    @ft.wraps(covariance_plot)
+    def covariance_plot(self, burn_in=0, step=1, parameters=None, rowvar=False, xrotation=-45, ax=None, **kwargs):
+        return covariance_plot(self.samples, burn_in, step, self._parameter_dict(parameters), rowvar, xrotation, ax,
+                               **kwargs)
 
     def acceptance_rate(self, burn_in=0):
         """
