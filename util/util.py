@@ -410,3 +410,10 @@ def iterable(x):
         whether the input is iterable but not a string
     """
     return hasattr(x, '__iter__') and not isinstance(x, (str, bytes, tf.Variable, tf.Tensor))
+
+
+def minmax(x, axis=None):
+    """
+    Return the minimum and maximum of an array.
+    """
+    return np.min(x, axis=axis), np.max(x, axis=axis)
