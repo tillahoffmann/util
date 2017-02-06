@@ -6,6 +6,9 @@ from .base import BaseSampler
 logger = logging.getLogger(__name__)
 
 
+MODES = ['update', 'reevaluate']
+
+
 class MetropolisSampler(BaseSampler):
     """
     Standard Metropolis sampler.
@@ -26,6 +29,7 @@ class MetropolisSampler(BaseSampler):
     """
     def __init__(self, fun, proposal_covariance, args=None, parameter_names=None, mode='update'):
         super(MetropolisSampler, self).__init__(fun, args, parameter_names)
+        assert mode in MODES, "mode must be one of %s not %s" % (MODES, mode)
         self.mode = mode
         self.proposal_covariance = proposal_covariance
 
