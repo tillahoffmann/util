@@ -419,10 +419,16 @@ def minmax(x, axis=None):
     return np.min(x, axis=axis), np.max(x, axis=axis)
 
 
-def list_index(iterable, *values):
+def list_index(iterable, *values, ignore_missing=False):
     """
     Get the index of a value in an iterable.
     """
     iterable = list(iterable)
-    result = [iterable.index(value) for value in values]
+    result = []
+    for value in values:
+        try:
+            result.append(iterable.index(value))
+        except ValueError:
+            if not ignore_missing:
+                raise
     return result[0] if len(values) == 1 else result
