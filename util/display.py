@@ -218,7 +218,7 @@ def covariance_plot(samples, burn_in=0, step=1, parameters=None, rowvar=False, x
         labels = list(parameters.values())
 
     # Plot the covariance matrix
-    cov = np.cov(samples[burn_in::step, idx], rowvar=rowvar)
+    cov = np.atleast_2d(np.cov(samples[burn_in::step, idx], rowvar=rowvar))
     vmax = np.max(np.abs(cov))
     kwargs_default = {
         'vmax': vmax,
