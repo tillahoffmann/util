@@ -417,3 +417,12 @@ def minmax(x, axis=None):
     Return the minimum and maximum of an array.
     """
     return np.min(x, axis=axis), np.max(x, axis=axis)
+
+
+def list_index(iterable, *values):
+    """
+    Get the index of a value in an iterable.
+    """
+    iterable = list(iterable)
+    result = [iterable.index(value) for value in values]
+    return result[0] if len(values) == 1 else result

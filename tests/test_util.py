@@ -19,3 +19,11 @@ def test_acorr():
 ])
 def test_iterable(value, desired):
     assert util.iterable(value) == desired, "incorrect result for `iterable`"
+
+
+@pytest.mark.parametrize('value, reference, desired', [
+    ("a", "bdaef", 2),
+    ("ab", "bdaef", [2, 0])
+])
+def test_list_index(value, reference, desired):
+    assert util.list_index(reference, *value) == desired, "incorrect result for `list_index`"
