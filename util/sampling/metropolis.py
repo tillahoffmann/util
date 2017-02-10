@@ -33,10 +33,10 @@ class MetropolisSampler(BaseSampler):
         self.mode = mode
         self.proposal_covariance = proposal_covariance
 
-    def sample(self, parameters, steps=1, callback=None):
+    def sample(self, parameters, steps=1, callback=None, tqdm=None):
         parameters = np.asarray(parameters)
 
-        for _ in steps if hasattr(steps, '__iter__') else range(steps):
+        for _ in self._steps(steps, tqdm):
             # Evaluate the current function value
             if len(self._fun_values) == 0 or self.mode == 'reevaluate':
                 fun_current = self.fun(parameters, *self.args)
@@ -108,7 +108,7 @@ class AdaptiveMetropolisSampler(MetropolisSampler):
         self.sample_covariance = 0
         self.sample_mean = 0
 
-    def sample(self, parameters, steps=1, callback=None):
+    def sample(self, parameters, steps=1, callback=None, tqdm=None):
         # Get additional information
         if not self._samples:
             # Initialise the proposal scale
@@ -118,7 +118,7 @@ class AdaptiveMetropolisSampler(MetropolisSampler):
             # Initialise the running mean and variance
             self.sample_mean = np.zeros(len(parameters))
 
-        for _ in range(steps):
+        for _ in self._steps(steps, tqdm):
             # Make a proposal with the initial covariance or the scaled sample covariance
             self.proposal_covariance = self.covariance0 if len(self._samples) < self.threshold \
                 else self.sample_covariance + self.covariance0

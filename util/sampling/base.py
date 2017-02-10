@@ -88,7 +88,7 @@ class BaseSampler(object):
         samples = self.samples[burn_in:]
         return np.mean(samples[1:] != samples[:-1])
 
-    def sample(self, parameters, steps=1, callback=None):
+    def sample(self, parameters, steps=1, callback=None, tqdm=None):
         """
         Draw samples from the distribution.
 
@@ -102,6 +102,14 @@ class BaseSampler(object):
             callback after each step
         """
         raise NotImplementedError
+
+    @staticmethod
+    def _steps(steps, tqdm):
+        if isinstance(steps, int):
+            steps = range(steps)
+        if tqdm:
+            steps = tqdm(steps)
+        return steps
 
     def describe(self, burn_in=0, parameters=None):
         """
