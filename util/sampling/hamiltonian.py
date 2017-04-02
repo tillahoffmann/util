@@ -93,7 +93,7 @@ class HamiltonianSampler(BaseSampler):
         mass = self.estimate_mass()
         np.savetxt(filename, mass)
 
-    def sample(self, parameters, steps=1, callback=None, full=False, epsilon=None, leapfrog_steps=None):
+    def sample(self, parameters, steps=1, callback=None, full=False, epsilon=None, leapfrog_steps=None, tqdm=None):
         """
         Draw samples from the distribution.
 
@@ -118,7 +118,10 @@ class HamiltonianSampler(BaseSampler):
         leapfrog_steps = leapfrog_steps or self.leapfrog_steps
         epsilon = epsilon or self.epsilon
 
-        for step in steps if hasattr(steps, '__iter__') else range(steps):
+        _steps = range(steps)
+        if tqdm:
+            _steps = tqdm(_steps)
+        for step in _steps:
             # Sample the momentum
             if self.mass.ndim < 2:
                 momentum = np.random.normal(0, 1, p) * np.sqrt(self.mass)
