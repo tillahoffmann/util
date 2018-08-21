@@ -199,7 +199,7 @@ class HamiltonianSampler(BaseSampler):
 
         raise ValueError("`full=True` is only allowed for single steps")
 
-    def dynamics_plot(self, parameters, epsilon=None, leapfrog_steps=None):
+    def dynamics_plot(self, parameters, epsilon=None, leapfrog_steps=None, legend=True):
         """
         Plot the dynamics of the parameters.
 
@@ -236,7 +236,8 @@ class HamiltonianSampler(BaseSampler):
             ax2.axvline(unit_steps, color='k', ls='dotted')
             unit_steps += 1
 
-        ax1.legend(loc=0, frameon=False)
+        if legend:
+            ax1.legend(loc=0, frameon=False)
         ax2.legend(loc=0, frameon=False)
 
         return fig, (ax1, ax2)
